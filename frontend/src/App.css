@@ -1,0 +1,15 @@
+.App {
+  text-align: center;
+}
+
+#videos{
+  display: grid;
+  grid-template-columns:1fr 1fr ;
+  gap:4vh;
+}
+
+.video-player{
+  background-color: black;
+  width: 100%;
+  height: 300px;
+}
