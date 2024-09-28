@@ -1,8 +1,31 @@
 const express = require('express');
 const { createClient } = require('redis');
+const cors = require('cors')
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 require('dotenv').config();
+
 const app = express()
+const httpServer = createServer(app)
+const io = new Server(httpServer,{
+    cors: {
+        origin: "http://localhost:3000",  
+        methods: ["GET", "POST"], 
+        credentials: true
+    }
+})
+
 // const server = http.createServer(http)
+
+app.use(cors({
+    origin: 'http://localhost:3000',  // Replace with your client origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true // If you are using cookies or authentication headers
+}));
+
+io.on("connection", ()=>{
+    console.log("connection established")
+})
 
 const client = createClient({
     password: process.env.REDIS_PASSWORD,
@@ -25,7 +48,7 @@ async function connectRedis(){
     }
 }
 
-app.listen(3001, ()=>{
+httpServer.listen(3001, ()=>{
     connectRedis()
     console.log("connected to server");
 })
