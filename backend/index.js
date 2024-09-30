@@ -3,6 +3,7 @@ const { createClient } = require('redis');
 const cors = require('cors')
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const {routes} = require("./routes")
 require('dotenv').config();
 
 const app = express()
@@ -18,10 +19,13 @@ const io = new Server(httpServer,{
 // const server = http.createServer(http)
 
 app.use(cors({
-    origin: 'http://localhost:3000',  // Replace with your client origin
+    origin: 'http://localhost:3000',  
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true // If you are using cookies or authentication headers
+    credentials: true 
 }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 
 io.on("connection", ()=>{
     console.log("connection established")
@@ -48,9 +52,11 @@ async function connectRedis(){
     }
 }
 
-httpServer.listen(3001, ()=>{
+app.use('/', routes)
+
+httpServer.listen(3002, ()=>{
     connectRedis()
     console.log("connected to server");
 })
 
-
+module.exports = client;
