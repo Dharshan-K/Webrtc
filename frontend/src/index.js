@@ -4,11 +4,17 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './App.css';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import CreateRoom from './components/CreateRoom';
 
+const router = createBrowserRouter([
+  { path: '/', element: <App/>},
+  { path: '/createRoom', element: <CreateRoom />}
+])
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router}/>
   </React.StrictMode>
 );
 
