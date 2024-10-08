@@ -33,16 +33,25 @@ const createRoom = async (req,res)=>{
 }
 
 const addUser = async (req,res)=>{
-  const { roomName, socketID, roomID } = req.body;  
+  const { roomName, socketID } = req.body;  
   const data1 = await redisClient.get(roomName)
+  if(!data1){
+    res.status(400).send("romm doesnt exist.")
+  }
   data1["user2Socket"] = socketID;
-  redisClient.set
+  redisClient.set(roomName, data1, 'EX', 36000, (err,rply)=>{
+    if(err){
+      console.log(err)
+    }else{
+      console.log(rply)
+    }
+  })
   res.status(200).send("user added")
 }
 
 const sendOffer = async(req,res)=>{
   const { receiverID, offer } = req.body;
-  await io.to(receiverID).emit("to receiver", offer);
+  await io.to(receiverID).emit("sendOffer", offer);
   res.status(200).send("offer send")
 }
 
