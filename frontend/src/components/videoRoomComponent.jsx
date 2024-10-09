@@ -1,10 +1,18 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import './../App.css';
-import { io } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
+import { initializeSocket } from "../utils/socketIO";
+import axios from "axios";
 
 export default function VideoRoom(){
 	let localStream;
 	let remoteStream;
+	const socket = initializeSocket()
+	const [currentRoom, setCurrentRoom] = useState("")
+	const [answer, setAnswer] = useState();
+	const [offer, setOffer] = useState()
+	let connection = new RTCPeerConnection(configuration);
+
 	let configuration = {
 		iceServers: [
 			{ urls: 'stun:stun.l.google.com:19302' },
@@ -15,6 +23,21 @@ export default function VideoRoom(){
 		]	
 	}
 
+	socket.on("connect", ()=>{
+		console.log('Connected to server:', socket.id);  
+		console.log("connected to video component")
+		localStorage.setItem('socketId', socket.id)	
+	})
+
+	socket.on("sendAnswer", (answer)=>{
+		connection.setRemoteDescription(answer);
+		console.log("received answer", answer)
+	})
+
+	socket.on("iceCandidate", (iceCandidate)=>{
+		connection.addIceCandidate(iceCandidate)
+	})
+
 	useEffect(()=>{
 		init()
 		getDevices()
@@ -24,41 +47,40 @@ export default function VideoRoom(){
   	localStream = await navigator.mediaDevices.getUserMedia({
   	  video: true,
     	audio: true,
-  	});
-
-		let connection = new RTCPeerConnection(configuration);
+  	});		
 
 		localStream.getTracks().forEach(track => {
 			connection.addTrack(track, localStream)
 		})
-
 		let offer = await connection.createOffer();
 
-		console.log(offer.sdp);
+		// console.log(offer.sdp);
 
 		connection.setLocalDescription(offer);
-		console.log(connection.connectionState)
+		setOffer(offer)
 
-		connection.onicecandidate = (event) => {
-			//send the event to the remote peer
-			//send the offer to the remote peer
-			if(event.candidate){
-				console.log("event", event.candidate);
-			}
-			
+		connection.onicecandidate = async (event) => {
+			// if(event.candidate){
+			// 	// console.log("event", event.candidate);
+				
+			// 	const roomData = await axios.post("http://localhost:3001/roomData", )
+			// 	const data = { receiverID: , iceCandidate: event.candidate}
+			// 	await axios.post("http://localhost:3001/sendIceCandidate", )
+			// }			
 		}
 
+		connection.ontrack((event)=>{
+			console.log(event.streams)
+			console.log("event received")
+			document.getElementById("user2").srcObject = event.streams[0];
+		})
 				
   	document.getElementById("user1").srcObject = localStream;
-  	document.getElementById("user2").srcObject = localStream;
+  	document.getElementById("user2").srcObject = remoteStream;
 	};
 
 	async function getDevices() {
   	const devices = await navigator.mediaDevices.enumerateDevices();
-  	console.log(
-    	"devices",
-    	devices
-  	);
   	// return devices.filter((device) => device.kind === "videoinput");
 	}
 
@@ -66,9 +88,13 @@ export default function VideoRoom(){
 		return RTCPeerConnection;
 	}
 
-	async function getOffer(){}
+	async function getOffer(){
 
-	async function getAnswer(){}
+	}
+
+	async function getAnswer(){
+
+	}
 
 	return(
 		<div id="videos">

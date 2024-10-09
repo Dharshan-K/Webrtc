@@ -1,3 +1,4 @@
+const { initializeSocket } = require("../../frontend/src/utils/socketIO");
 const {redisClient, io}  = require("./connectRedis")
 const { v4 :uuidv4} = require('uuid')
 
@@ -45,6 +46,10 @@ const addUser = async (req,res)=>{
     }else{
       console.log(rply)
     }
+  })
+  
+  io.on("answer", (answer)=>{
+    io.emit("sendAnswer", answer)
   })
   res.status(200).send("user added")
 }
