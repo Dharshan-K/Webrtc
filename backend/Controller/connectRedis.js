@@ -23,14 +23,40 @@ const io = new Server(httpServer,{
 }
 })
 
-const roomData = (req,res)=>{
-  const {roomName} = req.body
-  const data = redisClient.get(roomName);
+io.on("connection", (socket)=>{
+	socket.on("senderSocketID", (socketID, receiverID)=>{
+		io.to(socketID).emit("getOffer", { socketID :socketID })
+	})
+
+	socket.on("sendAnswer", (offer, offerID, answerID)=>{
+		io.to(offerID).emit("sendAnswer", { })
+	})
+})
+
+const userData = async (req,res)=>{
+  const {userName} = req.body
+	console.log(userName)
+  const data = await redisClient.get(userName);
+	console.log(data)
   if(data){
     res.status(200).send(data)
   }else{
-    res.status(400).send("room doesnt exist.")
+    res.status(400).send("User doesnt exist.")
   }  
 }
 
-module.exports = { redisClient, io, roomData }
+const postUserData = async (req,res)=>{
+	const {userName, socketID} = req.body
+	await redisClient.set(userName, socketID)
+	console.log(socketID)
+	res.status(200).send("user updated")
+}
+
+const redisData = async (req,res)=>{
+	const {userName, socketID} = req.body
+	console.log(userName, socketID)
+	await redisClient.set(userName, socketID)
+	res.status(200).send("Stored the socket data")
+}
+
+module.exports = { redisClient, io, userData, redisData, postUserData }

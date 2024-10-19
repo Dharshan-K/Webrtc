@@ -1,4 +1,3 @@
-const { initializeSocket } = require("../../frontend/src/utils/socketIO");
 const {redisClient, io}  = require("./connectRedis")
 const { v4 :uuidv4} = require('uuid')
 
