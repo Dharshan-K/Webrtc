@@ -1,12 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from 'axios';
+import { initializeSocket } from "../utils/socketIO";
 
 export default function CreateRoom(){  
   const [roomName, setRoomName] = useState("")
+  
+
+  useEffect(()=>{
+    const socket = initializeSocket()
+
+    socket.on("connect", async()=>{    
+      console.log("socket connected")
+      console.log(socket.id)
+      localStorage.setItem("socketID", socket.id)
+      const data = { userName: localStorage.getItem("userName"), socketID : localStorage.getItem("socketID")}
+      await axios.post("http://localhost:3001/postUserData", data).then((response)=>{
+        console.log(response)
+      })
+    })
+  },[])
+
+  
   const handleCreateRoom = async () =>{
-    const data = {roomName: roomName, socketID: localStorage.getItem('socketId')}
-    console.log(data)
-    await axios.post("http://localhost:3001/createRoom", data).then((response)=> {
+    console.log("connecting")
+    localStorage.setItem("userName", roomName)
+    const data = { userName: localStorage.getItem("userName"), socketID: localStorage.getItem("socketID")}
+    await axios.post("http://localhost:3001/redisData", data).then((response)=>{
       console.log(response)
     })
   }

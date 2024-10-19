@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { io } from "socket.io-client";
-import { redisClient } from "../../../backend/Controller/connectRedis";
 
 // socket.on('connect', () => {
   // console.log('Connected to server:', socket.id);  
@@ -13,5 +12,9 @@ import { redisClient } from "../../../backend/Controller/connectRedis";
 export function initializeSocket(){
   const socket = io("http://localhost:3001");
   return socket;
+}
+
+export function storeSocket(){
+  
 }
 
