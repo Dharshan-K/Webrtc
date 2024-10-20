@@ -14,7 +14,3 @@ export function initializeSocket(){
   return socket;
 }
 
-export function storeSocket(){
-  
-}
-

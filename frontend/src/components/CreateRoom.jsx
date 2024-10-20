@@ -22,7 +22,6 @@ export default function CreateRoom(){
 
   
   const handleCreateRoom = async () =>{
-    console.log("connecting")
     localStorage.setItem("userName", roomName)
     const data = { userName: localStorage.getItem("userName"), socketID: localStorage.getItem("socketID")}
     await axios.post("http://localhost:3001/redisData", data).then((response)=>{

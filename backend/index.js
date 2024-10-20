@@ -26,8 +26,32 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 
-io.on("connection", ()=>{
-	console.log("connection established")
+io.on("connection", (socket)=>{
+	socket.on("requesting", (data)=>{
+		console.log(data)
+	})
+	socket.on("connect", ()=>{
+		console.log("socket connection established")
+	})
+	socket.on("senderSocketID", (socketID, receiverID)=>{
+		io.to(socketID).emit("getOffer", { socketID :socketID })
+	})
+
+	socket.on("sendAnswer", (data)=>{
+		console.log("forwarding offer to User2")
+		console.log("answerID", data.answerID)
+		io.to(data.answerID).emit("sendAnswertoSender", { offer : data.offer, senderID : data.offerID })
+	})
+
+	socket.on("sendingAnswer", (data)=>{
+		console.log("forwading answer to user 1")
+		console.log("senderID",data.senderID)
+		io.to(data.senderID).emit("sendingAnswertoReceiver", { answer : data.answer})
+	})
+
+	socket.on("iceCandidate", (data)=>{
+		io.to(data.senderID).emit("receiveIceCandidate", { iceCandidate : data.iceCandidate })
+	})
 })
 
 redisClient.on('error', err => console.log('Redis Client Error', err));
@@ -50,3 +74,5 @@ connectRedis().then(()=>{
 		console.log("connected to server")
 	})
 })
+
+module.exports = { io }

@@ -1,11 +1,5 @@
 const {createClient} = require("redis");
-const { Server } = require("socket.io");
-const {createServer} = require('http');
-const express = require('express')
 require('dotenv').config();
-
-const app = express()
-const httpServer = createServer(app)
 
 const redisClient = createClient({
 	password: process.env.REDIS_PASSWORD,
@@ -15,29 +9,10 @@ const redisClient = createClient({
 	}
 })
 
-const io = new Server(httpServer,{
-	cors: {
-	origin: "http://localhost:3000",  
-	methods: ["GET", "POST"], 
-	credentials: true
-}
-})
-
-io.on("connection", (socket)=>{
-	socket.on("senderSocketID", (socketID, receiverID)=>{
-		io.to(socketID).emit("getOffer", { socketID :socketID })
-	})
-
-	socket.on("sendAnswer", (offer, offerID, answerID)=>{
-		io.to(offerID).emit("sendAnswer", { })
-	})
-})
-
 const userData = async (req,res)=>{
   const {userName} = req.body
-	console.log(userName)
+	console.log("userName", userName)
   const data = await redisClient.get(userName);
-	console.log(data)
   if(data){
     res.status(200).send(data)
   }else{
@@ -46,17 +21,29 @@ const userData = async (req,res)=>{
 }
 
 const postUserData = async (req,res)=>{
-	const {userName, socketID} = req.body
-	await redisClient.set(userName, socketID)
-	console.log(socketID)
-	res.status(200).send("user updated")
+	try{
+		const {userName, socketID} = req.body
+		if(userName == null || socketID == null){
+			res.status(400).send("null value")
+		}
+		await redisClient.set(userName, socketID, {
+			EX: 36000
+		})
+		res.status(200).send("user updated")
+	} catch(err){
+		console.log("Error" , err)
+		res.status(400).send("error")
+	}
 }
 
 const redisData = async (req,res)=>{
 	const {userName, socketID} = req.body
+	console.log("userData3")
 	console.log(userName, socketID)
-	await redisClient.set(userName, socketID)
+	await redisClient.set(userName, socketID, {
+		EX: 36000
+	})
 	res.status(200).send("Stored the socket data")
 }
 
-module.exports = { redisClient, io, userData, redisData, postUserData }
+module.exports = { redisClient, userData, redisData, postUserData }
