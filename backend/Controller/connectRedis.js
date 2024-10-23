@@ -10,23 +10,28 @@ const redisClient = createClient({
 })
 
 const userData = async (req,res)=>{
-  const {userName} = req.body
-	console.log("userName", userName)
-  const data = await redisClient.get(userName);
-  if(data){
-    res.status(200).send(data)
-  }else{
-    res.status(400).send("User doesnt exist.")
-  }  
+  try{
+		const { userName } = req.body
+  	const data = await redisClient.get(userName);
+  	if(data){
+    	res.status(200).send(data)
+  	}else{
+    	res.status(400).send("User doesnt exist.")
+  	}  
+	}catch(err){
+		console.log(err)
+		res.status(400).send("User doesnt exist.")
+	}
 }
 
 const postUserData = async (req,res)=>{
 	try{
-		const {userName, socketID} = req.body
-		if(userName == null || socketID == null){
+		const {userName, senderID} = req.body
+		if(userName == null || senderID == null){
 			res.status(400).send("null value")
 		}
-		await redisClient.set(userName, socketID, {
+		console.log("userName, senderID", userName,senderID)
+		await redisClient.set(userName, senderID, {
 			EX: 36000
 		})
 		res.status(200).send("user updated")

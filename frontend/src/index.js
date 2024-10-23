@@ -10,10 +10,10 @@ import JoinRoom from './components/JoinRoom';
 import VideoRoom from './components/videoRoomComponent';
 
 const router = createBrowserRouter([
-  { path: '/', element: <App/>},
-  { path: '/createRoom', element: <CreateRoom />},
-  { path: '/joinRoom', element: <JoinRoom />},
-  { path: '/videoRoom', element: <VideoRoom />}
+  { path: '/', element: <JoinRoom/>},
+  // { path: '/createRoom', element: <CreateRoom />},
+  // { path: '/joinRoom', element: <JoinRoom />},
+  // { path: '/videoRoom', element: <VideoRoom />}
 ])
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

@@ -26,31 +26,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 
-io.on("connection", (socket)=>{
-	socket.on("requesting", (data)=>{
-		console.log(data)
-	})
-	socket.on("connect", ()=>{
-		console.log("socket connection established")
-	})
-	socket.on("senderSocketID", (socketID, receiverID)=>{
-		io.to(socketID).emit("getOffer", { socketID :socketID })
-	})
+io.on("connection", async(socket)=>{
+	socket.emit("register", socket.id)
 
-	socket.on("sendAnswer", (data)=>{
-		console.log("forwarding offer to User2")
-		console.log("answerID", data.answerID)
-		io.to(data.answerID).emit("sendAnswertoSender", { offer : data.offer, senderID : data.offerID })
+	socket.on("sendingOffer", (data)=>{
+		console.log("data",data.receiverID)
+		io.to(data.receiverID).emit("receivingOffer", { offer : data.offer.sdp, senderID : data.senderID })
 	})
 
 	socket.on("sendingAnswer", (data)=>{
-		console.log("forwading answer to user 1")
-		console.log("senderID",data.senderID)
-		io.to(data.senderID).emit("sendingAnswertoReceiver", { answer : data.answer})
-	})
-
-	socket.on("iceCandidate", (data)=>{
-		io.to(data.senderID).emit("receiveIceCandidate", { iceCandidate : data.iceCandidate })
+		io.to(data.senderID).emit("receivingAnswer", { answer : data.answer })
 	})
 })
 
