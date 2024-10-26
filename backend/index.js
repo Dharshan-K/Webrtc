@@ -37,6 +37,10 @@ io.on("connection", async(socket)=>{
 	socket.on("sendingAnswer", (data)=>{
 		io.to(data.senderID).emit("receivingAnswer", { answer : data.answer })
 	})
+
+	socket.on("sendingIceCandidate", (data)=>{
+		io.to(data.senderID).emit("iceCandidate", { candidate : data.candidate })
+	})
 })
 
 redisClient.on('error', err => console.log('Redis Client Error', err));

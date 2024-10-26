@@ -8,6 +8,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CreateRoom from './components/CreateRoom';
 import JoinRoom from './components/JoinRoom';
 import VideoRoom from './components/videoRoomComponent';
+import JoinRoom2 from './components/JoinRoom2';
 
 const router = createBrowserRouter([
   { path: '/', element: <JoinRoom/>},
