@@ -1,20 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './App.css';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import CreateRoom from './components/CreateRoom';
 import JoinRoom from './components/JoinRoom';
-import VideoRoom from './components/videoRoomComponent';
-import JoinRoom2 from './components/JoinRoom2';
 
 const router = createBrowserRouter([
   { path: '/', element: <JoinRoom/>},
-  // { path: '/createRoom', element: <CreateRoom />},
-  // { path: '/joinRoom', element: <JoinRoom />},
-  // { path: '/videoRoom', element: <VideoRoom />}
 ])
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

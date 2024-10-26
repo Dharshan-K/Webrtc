@@ -30,7 +30,6 @@ io.on("connection", async(socket)=>{
 	socket.emit("register", socket.id)
 
 	socket.on("sendingOffer", (data)=>{
-		console.log("data",data.receiverID)
 		io.to(data.receiverID).emit("receivingOffer", { offer : data.offer.sdp, senderID : data.senderID })
 	})
 
