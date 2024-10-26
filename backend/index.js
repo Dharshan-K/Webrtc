@@ -11,14 +11,14 @@ const app = express()
 const httpServer = createServer(app)
 const io = new Server(httpServer,{
   	cors: {
-		origin: "http://localhost:3000",  
+		origin: "https://webrtc-esdj.onrender.com",  
 		methods: ["GET", "POST"], 
 		credentials: true
 	}
 })
 
 app.use(cors({
-	origin: 'http://localhost:3000',  
+	origin: 'https://webrtc-esdj.onrender.com',  
 	methods: ['GET', 'POST', 'PUT', 'DELETE'],
 	credentials: true 
 }));
