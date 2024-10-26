@@ -24,7 +24,7 @@ export default function JoinRoom() {
     console.log("useEffect ran")
     connectionRef.current = new RTCPeerConnection(pc_config);
     
-    socketRef.current = io("http://localhost:3001", {
+    socketRef.current = io("https://webrtc-backend-rhcw.onrender.com", {
       query: { userName: localStorage.getItem("userName") }
     });
 
@@ -155,7 +155,7 @@ export default function JoinRoom() {
   const createUser = async () => {
     try {
       const data = { userName: userName, senderID: user };
-      const response = await axios.post("http://localhost:3001/postUserData", data);
+      const response = await axios.post("https://webrtc-backend-rhcw.onrender.com/postUserData", data);
       console.log("response", response);
     } catch (err) {
       console.error("Error creating user:", err);
@@ -165,7 +165,7 @@ export default function JoinRoom() {
   const getCallerData = async () => {
     try {
       const data = { userName: callerName };
-      const response = await axios.post("http://localhost:3001/userData", data);
+      const response = await axios.post("https://webrtc-backend-rhcw.onrender.com/userData", data);
       const id = response.data;
       localStorage.setItem("receiverID", id);
       return id;

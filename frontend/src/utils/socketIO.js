@@ -10,7 +10,7 @@ import { io } from "socket.io-client";
 // })    
 
 export function initializeSocket(){
-  const socket = io("http://localhost:3001", {
+  const socket = io("https://webrtc-backend-rhcw.onrender.com", {
     query : { userName : localStorage.getItem("userName")}
   });
   return socket;
